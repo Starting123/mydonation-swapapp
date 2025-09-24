@@ -1,0 +1,47 @@
+name: donation_swap
+description: A Flutter app for donation and item swapping with Firebase backend.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase dependencies
+  firebase_core: ^2.24.2
+  firebase_auth: ^4.15.3
+  cloud_firestore: ^4.13.6
+  firebase_storage: ^11.6.0
+  firebase_messaging: ^14.7.10
+
+  # State management
+  provider: ^6.1.1
+
+  # HTTP client (optional but useful)
+  dio: ^5.4.0
+
+  # Image handling
+  cached_network_image: ^3.3.1
+  image_picker: ^1.0.7
+
+  # Notifications
+  flutter_local_notifications: ^17.0.0
+
+  # UI enhancements
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Add assets here if needed
+  # assets:
+  #   - images/
