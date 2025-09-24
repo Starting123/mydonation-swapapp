@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'logging_service.dart';
 
 class FCMService {
   static final FCMService _instance = FCMService._internal();
@@ -25,7 +26,7 @@ class FCMService {
       await _updateFCMToken();
       _setupMessageHandlers();
     } catch (e) {
-      print('Error initializing FCM service: $e');
+      LoggingService.error('Error initializing FCM service: $e', error: e);
     }
   }
 
@@ -42,11 +43,11 @@ class FCMService {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
+      LoggingService.info('User granted permission');
     } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
+      LoggingService.info('User granted provisional permission');
     } else {
-      print('User declined or has not accepted permission');
+      LoggingService.warning('User declined or has not accepted permission');
     }
   }
 
@@ -119,7 +120,7 @@ class FCMService {
   void _onNotificationTapped(NotificationResponse response) {
     final payload = response.payload;
     if (payload != null) {
-      print('Notification tapped with payload: $payload');
+      LoggingService.info('Notification tapped with payload: $payload');
       // TODO: Navigate to appropriate screen based on payload
       // This would typically use a navigation service or global navigator
     }
@@ -142,7 +143,7 @@ class FCMService {
         await _updateFCMTokenInFirestore(token);
       }
     } catch (e) {
-      print('Error getting FCM token: $e');
+      LoggingService.error('Error getting FCM token: $e', error: e);
     }
   }
 
@@ -157,9 +158,9 @@ class FCMService {
         'fcmTokenUpdatedAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      print('FCM token updated successfully');
+      LoggingService.info('FCM token updated successfully');
     } catch (e) {
-      print('Error updating FCM token in Firestore: $e');
+      LoggingService.error('Error updating FCM token in Firestore: $e', error: e);
     }
   }
 
@@ -177,7 +178,7 @@ class FCMService {
 
   // Handle foreground messages
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
-    print('Received foreground message: ${message.messageId}');
+    LoggingService.info('Received foreground message: ${message.messageId}');
     
     final notification = message.notification;
     final data = message.data;
@@ -195,7 +196,7 @@ class FCMService {
 
   // Handle message when app is opened from background
   void _handleMessageOpenedApp(RemoteMessage message) {
-    print('App opened from message: ${message.messageId}');
+    LoggingService.info('App opened from message: ${message.messageId}');
     _navigateBasedOnMessage(message.data);
   }
 
@@ -203,7 +204,7 @@ class FCMService {
   Future<void> _handleInitialMessage() async {
     final initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
-      print('App opened from terminated state with message: ${initialMessage.messageId}');
+      LoggingService.info('App opened from terminated state with message: ${initialMessage.messageId}');
       _navigateBasedOnMessage(initialMessage.data);
     }
   }
@@ -265,7 +266,7 @@ class FCMService {
         // Navigate to chat screen
         final chatId = data['chatId'];
         if (chatId != null) {
-          print('Navigate to chat: $chatId');
+          LoggingService.info('Navigate to chat: $chatId');
           // TODO: Use navigation service to navigate to chat
         }
         break;
@@ -273,7 +274,7 @@ class FCMService {
         // Navigate to post detail
         final postId = data['postId'];
         if (postId != null) {
-          print('Navigate to post: $postId');
+          LoggingService.info('Navigate to post: $postId');
           // TODO: Use navigation service to navigate to post
         }
         break;
@@ -281,7 +282,7 @@ class FCMService {
         // Navigate to post detail
         final postId = data['postId'];
         if (postId != null) {
-          print('Navigate to alert post: $postId');
+          LoggingService.info('Navigate to alert post: $postId');
           // TODO: Use navigation service to navigate to post
         }
         break;
@@ -362,7 +363,7 @@ class FCMService {
         payload: 'test',
       );
     } catch (e) {
-      print('Error sending test notification: $e');
+      LoggingService.error('Error sending test notification: $e', error: e);
     }
   }
 

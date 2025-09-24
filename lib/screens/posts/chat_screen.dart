@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../services/logging_service.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
@@ -77,12 +78,12 @@ class _ChatScreenState extends State<ChatScreen> {
       // Update unread count in chat document
       batch.update(
         _firestore.collection('chats').doc(widget.chatId),
-        {'unreadCount.${_currentUserId}': 0},
+        {'unreadCount.$_currentUserId': 0},
       );
       
       await batch.commit();
     } catch (e) {
-      print('Error marking messages as read: $e');
+      LoggingService.error('Error marking messages as read: $e', error: e);
     }
   }
 
@@ -121,9 +122,11 @@ class _ChatScreenState extends State<ChatScreen> {
       _scrollToBottom();
       
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send message: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send message: $e')),
+        );
+      }
     }
   }
 
@@ -174,7 +177,7 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     } catch (e) {
-      print('Error updating typing indicator: $e');
+      LoggingService.error('Error updating typing indicator: $e', error: e);
     }
   }
 
@@ -283,7 +286,7 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   blurRadius: 5,
                   offset: const Offset(0, -2),
                 ),
@@ -394,7 +397,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     timeString,
                     style: TextStyle(
                       color: isCurrentUser 
-                          ? Colors.white.withOpacity(0.7)
+                          ? Colors.white.withValues(alpha: 0.7)
                           : Colors.grey[600],
                       fontSize: 12,
                     ),
@@ -480,7 +483,7 @@ class _ChatScreenState extends State<ChatScreen> {
             scale: value,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[600]?.withOpacity(value),
+                color: Colors.grey[600]?.withValues(alpha: value),
                 shape: BoxShape.circle,
               ),
             ),

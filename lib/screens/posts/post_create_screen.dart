@@ -100,12 +100,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         // Check if user is verified
         String verificationStatus = await authService.getUserVerificationStatus();
         if (verificationStatus != 'approved') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('You must be verified to create posts'),
-              backgroundColor: Colors.orange,
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('You must be verified to create posts'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
           return;
         }
 
@@ -154,19 +156,23 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           _uploadProgress = 1.0;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Post created successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Post created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
 
-        // Navigate back
-        Navigator.of(context).pop();
+          // Navigate back
+          Navigator.of(context).pop();
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create post: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to create post: $e')),
+          );
+        }
       } finally {
         setState(() {
           _isUploading = false;
@@ -348,7 +354,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
-                Container(
+                SizedBox(
                   height: 120,
                   child: _selectedImages.isEmpty
                       ? GestureDetector(

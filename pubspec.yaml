@@ -31,6 +31,9 @@ dependencies:
   # Notifications
   flutter_local_notifications: ^17.0.0
 
+  # Path utilities
+  path: ^1.8.3
+
   # UI enhancements
   cupertino_icons: ^1.0.2
 

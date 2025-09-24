@@ -79,7 +79,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           },
           indicatorColor: Colors.white,
           labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withOpacity(0.7),
+          unselectedLabelColor: Colors.white.withValues(alpha: 0.7),
           tabs: const [
             Tab(
               icon: Icon(Icons.emoji_events),
@@ -154,7 +154,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           end: Alignment.bottomCenter,
           colors: [
             Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.8),
+            Theme.of(context).primaryColor.withValues(alpha: 0.8),
           ],
         ),
       ),
@@ -257,7 +257,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
           width: 80,
           height: height,
           decoration: BoxDecoration(
-            color: colors[position - 1].withOpacity(0.3),
+            color: colors[position - 1].withValues(alpha: 0.3),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             border: Border.all(color: colors[position - 1], width: 2),
           ),
@@ -299,7 +299,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen>
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),

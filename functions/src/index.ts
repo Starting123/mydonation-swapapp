@@ -8,7 +8,7 @@ const db = admin.firestore();
 
 // Submit ID for verification
 export const submitIdForVerification = functions.https.onCall(
-  async (data, context) => {
+  async (data: { imageUrl: string }, context: functions.https.CallableContext) => {
     // Check if user is authenticated
     if (!context.auth) {
       throw new functions.https.HttpsError(
@@ -70,7 +70,7 @@ export const submitIdForVerification = functions.https.onCall(
 
 // Get pending verifications (admin only)
 export const getPendingVerifications = functions.https.onCall(
-  async (data, context) => {
+  async (data: any, context: functions.https.CallableContext) => {
     // Check if user is authenticated
     if (!context.auth) {
       throw new functions.https.HttpsError(
@@ -134,7 +134,7 @@ export const getPendingVerifications = functions.https.onCall(
 
 // Update verification status (admin only)
 export const updateVerificationStatus = functions.https.onCall(
-  async (data, context) => {
+  async (data: { userId: string; status: string; reason?: string; verificationId: string }, context: functions.https.CallableContext) => {
     // Check if user is authenticated
     if (!context.auth) {
       throw new functions.https.HttpsError(
@@ -207,7 +207,7 @@ export const updateVerificationStatus = functions.https.onCall(
 
 // Get verification audit log (admin only)
 export const getVerificationAuditLog = functions.https.onCall(
-  async (data, context) => {
+  async (data: { limit?: number }, context: functions.https.CallableContext) => {
     // Check if user is authenticated
     if (!context.auth) {
       throw new functions.https.HttpsError(
@@ -236,7 +236,7 @@ export const getVerificationAuditLog = functions.https.onCall(
         .limit(limit)
         .get();
 
-      const auditLog = auditQuery.docs.map((doc) => ({
+      const auditLog = auditQuery.docs.map((doc: admin.firestore.QueryDocumentSnapshot) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -256,7 +256,7 @@ export const getVerificationAuditLog = functions.https.onCall(
 
 // Create signed URL for secure image access (admin only)
 export const getSignedImageUrl = functions.https.onCall(
-  async (data, context) => {
+  async (data: { imagePath: string }, context: functions.https.CallableContext) => {
     // Check if user is authenticated
     if (!context.auth) {
       throw new functions.https.HttpsError(
@@ -314,7 +314,7 @@ export const getSignedImageUrl = functions.https.onCall(
 // Send notification when a new message is created
 export const sendMessageNotification = functions.firestore
   .document("notifications/{notificationId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const notification = snap.data();
     
     // Only handle message notifications
@@ -388,7 +388,7 @@ export const sendMessageNotification = functions.firestore
 // Send notification when someone shows interest in a post
 export const sendInterestNotification = functions.firestore
   .document("notifications/{notificationId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const notification = snap.data();
     
     // Only handle interest notifications
@@ -459,7 +459,7 @@ export const sendInterestNotification = functions.firestore
 // Send notification when a post matches user's saved alerts
 export const sendPostAlertNotification = functions.firestore
   .document("posts/{postId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const post = snap.data();
     
     try {
@@ -468,7 +468,7 @@ export const sendPostAlertNotification = functions.firestore
         .where("isActive", "==", true)
         .get();
 
-      const alertPromises = alertsQuery.docs.map(async (alertDoc) => {
+      const alertPromises = alertsQuery.docs.map(async (alertDoc: admin.firestore.QueryDocumentSnapshot) => {
         const alert = alertDoc.data();
         const userId = alert.userId;
         
@@ -552,7 +552,7 @@ export const sendPostAlertNotification = functions.firestore
 
 // Function to update FCM token
 export const updateFCMToken = functions.https.onCall(
-  async (data, context) => {
+  async (data: { token: string }, context: functions.https.CallableContext) => {
     if (!context.auth) {
       throw new functions.https.HttpsError(
         "unauthenticated",
@@ -591,7 +591,7 @@ export const updateFCMToken = functions.https.onCall(
 
 // Function to test FCM notification (for development)
 export const testNotification = functions.https.onCall(
-  async (data, context) => {
+  async (data: { title: string; body: string }, context: functions.https.CallableContext) => {
     if (!context.auth) {
       throw new functions.https.HttpsError(
         "unauthenticated",
@@ -653,7 +653,7 @@ export const testNotification = functions.https.onCall(
 // Update user reputation when reputation log is created
 export const updateUserReputation = functions.firestore
   .document("reputation_logs/{logId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const log = snap.data();
     
     try {
@@ -663,7 +663,7 @@ export const updateUserReputation = functions.firestore
       
       const userReputationRef = db.collection("user_reputation").doc(userId);
       
-      await db.runTransaction(async (transaction) => {
+      await db.runTransaction(async (transaction: admin.firestore.Transaction) => {
         const userReputationDoc = await transaction.get(userReputationRef);
         
         if (!userReputationDoc.exists) {
@@ -738,7 +738,7 @@ function getLevel(points: number): string {
 // Add reputation points when post is marked as completed
 export const addReputationOnCompletion = functions.firestore
   .document("posts/{postId}")
-  .onUpdate(async (change, context) => {
+  .onUpdate(async (change: functions.Change<functions.firestore.QueryDocumentSnapshot>, context: functions.EventContext) => {
     const before = change.before.data();
     const after = change.after.data();
     
@@ -770,7 +770,7 @@ export const addReputationOnCompletion = functions.firestore
 // Add reputation points when positive feedback is submitted
 export const addReputationOnFeedback = functions.firestore
   .document("feedbacks/{feedbackId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const feedback = snap.data();
     
     // Only add points for positive feedback (rating >= 4)
@@ -803,7 +803,7 @@ export const addReputationOnFeedback = functions.firestore
 // Deduct reputation points when abuse is reported
 export const deductReputationOnAbuse = functions.firestore
   .document("abuse_reports/{reportId}")
-  .onCreate(async (snap, context) => {
+  .onCreate(async (snap: functions.firestore.QueryDocumentSnapshot, context: functions.EventContext) => {
     const report = snap.data();
     
     try {
@@ -832,7 +832,7 @@ export const deductReputationOnAbuse = functions.firestore
 
 // Function to manually adjust reputation (admin only)
 export const adjustReputation = functions.https.onCall(
-  async (data, context) => {
+  async (data: { userId: string; points: number; reason: string }, context: functions.https.CallableContext) => {
     // Check if user is authenticated and is admin
     if (!context.auth) {
       throw new functions.https.HttpsError(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'logging_service.dart';
 
 class AuthService extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -32,7 +33,7 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result;
     } catch (e) {
-      print('Sign up error: $e');
+      LoggingService.error('Sign up error: $e', error: e);
       rethrow;
     }
   }
@@ -48,7 +49,7 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
       return result;
     } catch (e) {
-      print('Sign in error: $e');
+      LoggingService.error('Sign in error: $e', error: e);
       rethrow;
     }
   }
@@ -59,7 +60,7 @@ class AuthService extends ChangeNotifier {
       await _auth.signOut();
       notifyListeners();
     } catch (e) {
-      print('Sign out error: $e');
+      LoggingService.error('Sign out error: $e', error: e);
       rethrow;
     }
   }
@@ -80,7 +81,7 @@ class AuthService extends ChangeNotifier {
       }
       return 'not_submitted';
     } catch (e) {
-      print('Error getting verification status: $e');
+      LoggingService.error('Error getting verification status: $e', error: e);
       return 'not_submitted';
     }
   }
@@ -102,7 +103,7 @@ class AuthService extends ChangeNotifier {
         'timestamp': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error updating verification status: $e');
+      LoggingService.error('Error updating verification status: $e', error: e);
       rethrow;
     }
   }

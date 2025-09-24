@@ -37,9 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
           _passwordController.text,
         );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed: $e')),
+          );
+        }
       } finally {
         setState(() {
           _isLoading = false;

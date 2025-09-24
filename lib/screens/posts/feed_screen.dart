@@ -76,9 +76,11 @@ class _FeedScreenState extends State<FeedScreen> {
         _hasMorePosts = false;
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading posts: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading posts: $e')),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -105,9 +107,11 @@ class _FeedScreenState extends State<FeedScreen> {
         _hasMorePosts = false;
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading more posts: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error loading more posts: $e')),
+        );
+      }
     } finally {
       setState(() => _isLoading = false);
     }
@@ -229,7 +233,7 @@ class _FeedScreenState extends State<FeedScreen> {
                             });
                             _loadInitialPosts();
                           },
-                          selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                          selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                         ),
                       );
                     },

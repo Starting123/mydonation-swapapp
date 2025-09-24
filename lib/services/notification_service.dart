@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'logging_service.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -38,7 +39,7 @@ class NotificationService {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
+      LoggingService.info('User granted notification permission');
     }
 
     // Handle foreground messages

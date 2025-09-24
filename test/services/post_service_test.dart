@@ -1,22 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:donation_swap/models/post_model.dart';
-import 'package:donation_swap/services/post_service.dart';
 
 void main() {
   group('PostService Tests', () {
-    late PostService postService;
-
-    setUp(() {
-      postService = PostService();
-    });
 
     group('Post Filtering Tests', () {
       test('should filter posts by category correctly', () {
         final posts = _createSamplePosts();
         
-        final electronicsFilter = (PostModel post) => post.category == 'Electronics';
-        final booksFilter = (PostModel post) => post.category == 'Books';
+        bool electronicsFilter(PostModel post) => post.category == 'Electronics';
+        bool booksFilter(PostModel post) => post.category == 'Books';
         
         final electronicsPosts = posts.where(electronicsFilter).toList();
         final booksPosts = posts.where(booksFilter).toList();
@@ -121,11 +114,11 @@ void main() {
           userName: 'Test User',
           userEmail: 'test@example.com',
           createdAt: now,
-          expiresAt: now.add(Duration(days: expiryDays)),
+          expiresAt: now.add(const Duration(days: expiryDays)),
           isActive: true,
         );
 
-        final expectedExpiryDate = now.add(Duration(days: expiryDays));
+        final expectedExpiryDate = now.add(const Duration(days: expiryDays));
         expect(post.expiresAt.day, equals(expectedExpiryDate.day));
         expect(post.expiresAt.month, equals(expectedExpiryDate.month));
         expect(post.expiresAt.year, equals(expectedExpiryDate.year));
@@ -154,7 +147,6 @@ void main() {
             isActive: true,
           );
           
-          final expectedDate = now.add(Duration(days: days));
           expect(post.expiresAt.isAfter(now), isTrue);
           expect(post.expiresAt.difference(now).inDays, 
                  closeTo(days, 1)); // Allow 1 day tolerance

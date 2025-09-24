@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/post_model.dart';
 import '../../models/user_model.dart';
+import '../../services/logging_service.dart';
 import 'chat_screen.dart';
 
 class PostDetailScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           setState(() {});
         }
       } catch (e) {
-        print('Error loading current user: $e');
+        LoggingService.error('Error loading current user: $e', error: e);
       }
     }
   }
@@ -389,7 +390,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 shape: BoxShape.circle,
                                 color: _currentImageIndex == entry.key
                                     ? Colors.white
-                                    : Colors.white.withOpacity(0.5),
+                                    : Colors.white.withValues(alpha: 0.5),
                               ),
                             );
                           }).toList(),
@@ -403,7 +404,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.7),
+                            color: Colors.black.withValues(alpha: 0.7),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -542,7 +543,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: _getExpiryColor(widget.post.expiresAt).withOpacity(0.1),
+                      color: _getExpiryColor(widget.post.expiresAt).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _getExpiryColor(widget.post.expiresAt),
